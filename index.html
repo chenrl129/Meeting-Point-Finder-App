@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Point Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-map-marker-alt"></i> Meeting Point Finder</h1>
+            <p>Find the perfect middle ground friends</p>
+        </header>
+
+        <div class="main-content">
+            <div class="controls-panel">
+                <div class="section">
+                    <h3><i class="fas fa-users"></i> Add Locations</h3>
+                    <div class="input-group">
+                        <input type="text" id="locationInput" placeholder="Enter address or location name">
+                        <button id="addLocationBtn"><i class="fas fa-plus"></i> Add</button>
+                    </div>
+                    <div class="input-help">
+                        <small>Click on the map to add locations, or type an address above</small>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-list"></i> Added Locations</h3>
+                    <ul id="locationsList" class="locations-list">
+                        <li class="no-locations">No locations added yet</li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-calculator"></i> Calculate Meeting Points</h3>
+                    <div class="calculation-options">
+                        <button id="calculateDistanceBtn" class="calc-btn distance-btn">
+                            <i class="fas fa-crosshairs"></i>
+                            Find Center Point
+                        </button>
+                        <button id="calculateTravelTimeBtn" class="calc-btn travel-btn">
+                            <i class="fas fa-clock"></i>
+                            Estimate Travel Times
+                        </button>
+                    </div>
+                    <div class="travel-mode-selector">
+                        <label for="travelMode">Travel Mode:</label>
+                        <select id="travelMode">
+                            <option value="driving">Driving</option>
+                            <option value="walking">Walking</option>
+                            <option value="transit">Public Transit</option>
+                            <option value="bicycling">Bicycling</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-info-circle"></i> Results</h3>
+                    <div id="resultsPanel" class="results-panel">
+                        <p>Add at least 2 locations to calculate meeting points.</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <button id="clearAllBtn" class="clear-btn">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <div id="map"></div>
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-color user-location"></div>
+                        <span>Your Locations</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color meeting-point-distance"></div>
+                        <span>Center Point</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color meeting-point-travel"></div>
+                        <span>Travel Time Point</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Calculating optimal meeting point...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
