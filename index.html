@@ -104,5 +104,35 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
+
+    <div class="modal-overlay" id="welcomeModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModalBtn">&times;</button>
+            <h2>Welcome to the Meeting Point Finder!</h2>
+            <p>Here’s how to find the perfect meeting spot in 3 easy steps:</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h3>1. Add Locations</h3>
+                    <p>Click on the map or search for an address to add locations for you and your friends.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fas fa-calculator"></i></div>
+                    <h3>2. Calculate</h3>
+                    <p>Click "Find Center Point" for the geographic middle or "Estimate Travel Times" for time-based suggestions.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fas fa-bullseye"></i></div>
+                    <h3>3. Get Your Spot</h3>
+                    <p>The optimal meeting point will appear on the map, with detailed distance and time info in the results panel.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <label>
+                    <input type="checkbox" id="dontShowAgain"> Don't show this again
+                </label>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

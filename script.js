@@ -14,6 +14,7 @@ class MeetingPointFinder {
         this.initMap();
         this.bindEvents();
         this.requestUserLocation();
+        this.showWelcomeModal();
     }
 
     initMap() {
@@ -72,6 +73,23 @@ class MeetingPointFinder {
         // Clear all button
         document.getElementById('clearAllBtn').addEventListener('click', () => {
             this.clearAll();
+        });
+
+        // Modal events
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            this.hideWelcomeModal();
+        });
+        document.getElementById('welcomeModal').addEventListener('click', (e) => {
+            if (e.target.id === 'welcomeModal') {
+                this.hideWelcomeModal();
+            }
+        });
+        document.getElementById('dontShowAgain').addEventListener('change', (e) => {
+            if (e.target.checked) {
+                localStorage.setItem('hideWelcomeModal', 'true');
+            } else {
+                localStorage.removeItem('hideWelcomeModal');
+            }
         });
     }
 
@@ -137,7 +155,8 @@ class MeetingPointFinder {
 
     addMarkerToMap(location) {
         const marker = L.marker([location.lat, location.lng], {
-            icon: this.createCustomIcon('#3182ce')
+            icon: this.createCustomIcon('#3182ce'),
+            draggable: true // Make markers draggable
         }).addTo(this.map);
 
         marker.bindPopup(`
@@ -146,6 +165,12 @@ class MeetingPointFinder {
                 <div class="popup-coords">${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}</div>
             </div>
         `);
+
+        // Add drag event listener
+        marker.on('dragend', (event) => {
+            const newLatLng = event.target.getLatLng();
+            this.updateLocationPosition(location.id, newLatLng.lat, newLatLng.lng);
+        });
 
         this.userMarkers.push({ marker, id: location.id });
     }
@@ -192,6 +217,17 @@ class MeetingPointFinder {
 
         this.updateLocationsList();
         this.clearMeetingPoints();
+    }
+
+    updateLocationPosition(id, lat, lng) {
+        const location = this.locations.find(loc => loc.id === id);
+        if (location) {
+            location.lat = lat;
+            location.lng = lng;
+            this.updateLocationsList();
+            this.clearMeetingPoints();
+            this.showMessage('Location updated. Recalculate to see new results.', 'success');
+        }
     }
 
     calculateMeetingPointByDistance() {
@@ -449,6 +485,16 @@ class MeetingPointFinder {
         setTimeout(() => {
             messageEl.style.display = 'none';
         }, 5000);
+    }
+
+    showWelcomeModal() {
+        if (!localStorage.getItem('hideWelcomeModal')) {
+            document.getElementById('welcomeModal').classList.add('visible');
+        }
+    }
+
+    hideWelcomeModal() {
+        document.getElementById('welcomeModal').classList.remove('visible');
     }
 }
 
