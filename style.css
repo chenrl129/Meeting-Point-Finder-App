@@ -259,24 +259,160 @@ header {
     box-shadow: 0 8px 20px rgba(49, 130, 206, 0.3);
 }
 
-.travel-mode-selector {
-    margin-bottom: 10px;
+.options-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
 }
 
-.travel-mode-selector label {
+.travel-mode-selector,
+.time-selector {
+    flex: 1;
+}
+
+.travel-mode-selector {
+    margin-bottom: 0;
+}
+
+.travel-mode-selector label,
+.time-selector label {
     display: block;
     margin-bottom: 5px;
     font-weight: 500;
     color: #4a5568;
+    font-size: 14px;
 }
 
-.travel-mode-selector select {
+.travel-mode-selector select,
+.time-selector input {
     width: 100%;
     padding: 10px;
     border: 2px solid #e2e8f0;
     border-radius: 8px;
     background: white;
     font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.travel-mode-selector select:focus,
+.time-selector input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.map-options {
+    margin-bottom: 15px;
+}
+
+.map-options label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+.map-style-options {
+    display: flex;
+    gap: 10px;
+}
+
+.map-style-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.map-style-btn i {
+    font-size: 18px;
+    color: #4a5568;
+}
+
+.map-style-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.map-style-btn.active {
+    border-color: #667eea;
+    background-color: #f5f7ff;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.map-style-btn.active i {
+    color: #667eea;
+}
+
+.route-option {
+    margin-top: 15px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #4a5568;
+    position: relative;
+    padding-left: 30px;
+    user-select: none;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #fff;
+    border: 2px solid #e2e8f0;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+    border-color: #cbd5e0;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.checkbox-container .checkmark:after {
+    left: 6px;
+    top: 3px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
 }
 
 .results-panel {
@@ -693,4 +829,92 @@ header {
     justify-content: center;
     gap: 8px;
     cursor: pointer;
+}
+
+/* Keyboard shortcuts panel */
+.keyboard-shortcuts-panel {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+}
+
+.toggle-shortcuts-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #4a5568;
+    transition: all 0.2s ease;
+}
+
+.toggle-shortcuts-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.shortcuts-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    margin-top: 10px;
+    width: 280px;
+}
+
+.shortcuts-content.visible {
+    max-height: 300px;
+    padding: 20px;
+}
+
+.shortcuts-content h3 {
+    color: #2d3748;
+    margin-bottom: 15px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.shortcuts-content h3::before {
+    content: '\f11c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+}
+
+.shortcut-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.shortcut-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.key-combo {
+    background: #f1f5f9;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+.key-action {
+    color: #4a5568;
 }

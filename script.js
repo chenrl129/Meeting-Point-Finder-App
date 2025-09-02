@@ -7,6 +7,8 @@ class MeetingPointFinder {
             travelTime: null
         };
         this.userMarkers = [];
+        this.routeControl = null;
+        this.showRoutesPreference = true; // Default to showing routes
         this.init();
     }
 
@@ -91,6 +93,155 @@ class MeetingPointFinder {
                 localStorage.removeItem('hideWelcomeModal');
             }
         });
+        
+        // Toggle keyboard shortcuts panel
+        document.getElementById('toggleShortcutsBtn').addEventListener('click', () => {
+            const shortcutsContent = document.querySelector('.shortcuts-content');
+            shortcutsContent.classList.toggle('visible');
+        });
+
+        // Map style selectors
+        const mapStyleBtns = document.querySelectorAll('.map-style-btn');
+        mapStyleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                mapStyleBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+                
+                // Change map style
+                const style = btn.getAttribute('data-style');
+                this.changeMapStyle(style);
+            });
+        });
+        
+        // Show/hide routes checkbox
+        document.getElementById('showRoutes').addEventListener('change', (e) => {
+            this.toggleRoutes(e.target.checked);
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Don't trigger shortcuts when typing in an input field
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                return;
+            }
+            
+            // Alt+C: Calculate by distance
+            if (e.altKey && e.key === 'c') {
+                e.preventDefault();
+                this.calculateMeetingPointByDistance();
+            }
+            
+            // Alt+T: Calculate by travel time
+            if (e.altKey && e.key === 't') {
+                e.preventDefault();
+                this.calculateMeetingPointByTravelTime();
+            }
+            
+            // Alt+A: Focus add location input
+            if (e.altKey && e.key === 'a') {
+                e.preventDefault();
+                document.getElementById('locationInput').focus();
+            }
+            
+            // Alt+X: Clear all
+            if (e.altKey && e.key === 'x') {
+                e.preventDefault();
+                this.clearAll();
+            }
+        });
+    }
+    
+    changeMapStyle(style) {
+        // Remove current tile layer
+        this.map.eachLayer(layer => {
+            if (layer instanceof L.TileLayer) {
+                this.map.removeLayer(layer);
+            }
+        });
+        
+        // Add new tile layer based on selected style
+        switch(style) {
+            case 'satellite':
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                }).addTo(this.map);
+                break;
+                
+            case 'dark':
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                }).addTo(this.map);
+                break;
+                
+            case 'transport':
+                L.tileLayer('https://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
+                    attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(this.map);
+                break;
+                
+            default: // default style
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(this.map);
+        }
+    }
+    
+    toggleRoutes(show) {
+        // Store the preference
+        this.showRoutesPreference = show;
+        
+        // If we have meeting points, update the routes
+        if (this.meetingPointMarkers.distance || this.meetingPointMarkers.travelTime) {
+            this.updateRoutes();
+        }
+    }
+    
+    updateRoutes() {
+        // Clear existing routes
+        if (this.routeControl) {
+            this.map.removeControl(this.routeControl);
+            this.routeControl = null;
+        }
+        
+        // If routes should be hidden, exit here
+        if (!this.showRoutesPreference) {
+            return;
+        }
+        
+        // Get active meeting point (distance or travel time)
+        let meetingPoint = null;
+        if (this.meetingPointMarkers.travelTime) {
+            meetingPoint = this.meetingPointMarkers.travelTime.getLatLng();
+        } else if (this.meetingPointMarkers.distance) {
+            meetingPoint = this.meetingPointMarkers.distance.getLatLng();
+        } else {
+            return; // No meeting point to route to
+        }
+        
+        // Create route waypoints (from each location to meeting point)
+        const waypoints = this.locations.map(loc => {
+            return [
+                L.latLng(loc.lat, loc.lng),
+                L.latLng(meetingPoint.lat, meetingPoint.lng)
+            ];
+        });
+        
+        // If Leaflet Routing Machine is available, create routes
+        if (L.Routing && waypoints.length > 0) {
+            // Only create one route at a time for better performance
+            const firstWaypoints = waypoints[0];
+            this.routeControl = L.Routing.control({
+                waypoints: firstWaypoints,
+                routeWhileDragging: false,
+                lineOptions: {
+                    styles: [{color: '#6366F1', opacity: 0.7, weight: 5}]
+                },
+                createMarker: function() { return null; }, // Don't create markers, we already have them
+                show: false // Don't show the routing panel
+            }).addTo(this.map);
+        }
     }
 
     async addLocationFromInput() {
@@ -151,6 +302,11 @@ class MeetingPointFinder {
         this.addMarkerToMap(location);
         this.updateLocationsList();
         this.clearMeetingPoints();
+        
+        // Update routes if we have an active meeting point
+        if ((this.meetingPointMarkers.distance || this.meetingPointMarkers.travelTime) && this.showRoutesPreference) {
+            this.updateRoutes();
+        }
     }
 
     addMarkerToMap(location) {
@@ -276,6 +432,11 @@ class MeetingPointFinder {
         const allPoints = [...this.locations, centroid];
         const group = new L.featureGroup(allPoints.map(p => L.marker([p.lat, p.lng])));
         this.map.fitBounds(group.getBounds().pad(0.1));
+        
+        // Update routes
+        if (this.showRoutesPreference) {
+            this.updateRoutes();
+        }
     }
 
     calculateCentroid(locations) {
@@ -298,6 +459,7 @@ class MeetingPointFinder {
             // Use the same centroid approach but consider travel mode characteristics
             const centroid = this.calculateCentroid(this.locations);
             const travelMode = document.getElementById('travelMode').value;
+            const meetingTime = document.getElementById('meetingTime').value;
             
             // For travel time, we still use the centroid but may apply slight adjustments
             // based on travel mode in a real implementation
@@ -332,6 +494,11 @@ class MeetingPointFinder {
             const allPoints = [...this.locations, meetingPoint];
             const group = new L.featureGroup(allPoints.map(p => L.marker([p.lat, p.lng])));
             this.map.fitBounds(group.getBounds().pad(0.1));
+            
+            // Update routes
+            if (this.showRoutesPreference) {
+                this.updateRoutes();
+            }
 
         } catch (error) {
             console.error('Error calculating travel time meeting point:', error);
@@ -390,14 +557,31 @@ class MeetingPointFinder {
     toRadians(degrees) {
         return degrees * (Math.PI / 180);
     }
+    
+    formatMeetingTime(time) {
+        if (!time) return 'Not set';
+        
+        // Convert 24-hour format to 12-hour format with AM/PM
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours, 10);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const hour12 = hour % 12 || 12;
+        
+        return `${hour12}:${minutes} ${ampm}`;
+    }
 
     displayResults(result) {
         const resultsPanel = document.getElementById('resultsPanel');
+        const meetingTime = document.getElementById('meetingTime').value;
+        
+        // Format meeting time for display
+        const formattedTime = this.formatMeetingTime(meetingTime);
         
         let detailsHtml = '';
         if (result.type.includes('Center') || result.type.includes('Distance')) {
             detailsHtml = `
                 <div class="result-details">
+                    <p><span class="result-highlight"><i class="far fa-clock"></i> Meeting time:</span> ${formattedTime}</p>
                     <strong>Distance from each location:</strong><br>
                     ${result.details}<br><br>
                     <strong>Average distance:</strong> ${result.avgDistance} km<br>

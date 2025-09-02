@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet Routing Machine for route visualization -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <!-- Google Places API for address autocomplete -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBG8JAUghCp7CY2wuQFuZDuiSECBmMAxnw&libraries=places"></script>
 </head>
 <body>
     <div class="container">
@@ -30,6 +34,18 @@
                     </div>
                     <div class="input-help">
                         <small>Click on the map to add locations, or type an address above</small>
+                        <small class="keyboard-shortcut">Press Enter to add location</small>
+                    </div>
+                    <div class="favorites-container">
+                        <div class="favorites-header">
+                            <h4><i class="fas fa-star"></i> Saved Locations</h4>
+                            <button id="manageFavoritesBtn" class="small-btn" title="Manage Favorites">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </div>
+                        <div id="favoritesList" class="favorites-list">
+                            <p class="no-favorites">No saved locations yet</p>
+                        </div>
                     </div>
                 </div>
 
@@ -52,14 +68,44 @@
                             Estimate Travel Times
                         </button>
                     </div>
-                    <div class="travel-mode-selector">
-                        <label for="travelMode">Travel Mode:</label>
-                        <select id="travelMode">
-                            <option value="driving">Driving</option>
-                            <option value="walking">Walking</option>
-                            <option value="transit">Public Transit</option>
-                            <option value="bicycling">Bicycling</option>
-                        </select>
+                    <div class="options-row">
+                        <div class="travel-mode-selector">
+                            <label for="travelMode">Travel Mode:</label>
+                            <select id="travelMode">
+                                <option value="driving">Driving</option>
+                                <option value="walking">Walking</option>
+                                <option value="transit">Public Transit</option>
+                                <option value="bicycling">Bicycling</option>
+                            </select>
+                        </div>
+                        <div class="time-selector">
+                            <label for="meetingTime">Meeting Time:</label>
+                            <input type="time" id="meetingTime" value="12:00">
+                        </div>
+                    </div>
+                    <div class="map-options">
+                        <label>Map Style:</label>
+                        <div class="map-style-options">
+                            <button class="map-style-btn active" data-style="default" title="Default">
+                                <i class="fas fa-map"></i>
+                            </button>
+                            <button class="map-style-btn" data-style="satellite" title="Satellite">
+                                <i class="fas fa-satellite"></i>
+                            </button>
+                            <button class="map-style-btn" data-style="dark" title="Dark Mode">
+                                <i class="fas fa-moon"></i>
+                            </button>
+                            <button class="map-style-btn" data-style="transport" title="Transport">
+                                <i class="fas fa-bus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="route-option">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="showRoutes" checked>
+                            <span class="checkmark"></span>
+                            Show travel routes on map
+                        </label>
                     </div>
                 </div>
 
@@ -102,9 +148,35 @@
                 <p>Calculating optimal meeting point...</p>
             </div>
         </div>
+        
+        <div class="keyboard-shortcuts-panel" id="keyboardShortcutsPanel">
+            <button id="toggleShortcutsBtn" class="toggle-shortcuts-btn">
+                <i class="fas fa-keyboard"></i>
+            </button>
+            <div class="shortcuts-content">
+                <h3>Keyboard Shortcuts</h3>
+                <div class="shortcut-item">
+                    <span class="key-combo">Alt+A</span>
+                    <span class="key-action">Focus address input</span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="key-combo">Alt+C</span>
+                    <span class="key-action">Calculate center point</span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="key-combo">Alt+T</span>
+                    <span class="key-action">Calculate travel times</span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="key-combo">Alt+X</span>
+                    <span class="key-action">Clear all</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
     <script src="script.js"></script>
 
     <div class="modal-overlay" id="welcomeModal">
