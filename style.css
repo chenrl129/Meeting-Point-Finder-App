@@ -19,19 +19,21 @@ body {
 }
 
 header {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     color: white;
     margin-bottom: 30px;
     backdrop-filter: blur(10px);
     background: rgba(255, 255, 255, 0.1);
     border-radius: 20px;
-    padding: 30px;
+    padding: 20px 30px;
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-header h1 {
-    font-size: 3rem;
-    margin-bottom: 15px;
+.header-content h1 {
+    font-size: 2.2rem;
+    margin: 0;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     font-weight: 700;
     background: linear-gradient(45deg, #ffffff, #e2e8f0);
@@ -40,8 +42,9 @@ header h1 {
     background-clip: text;
 }
 
-header p {
-    font-size: 1.3rem;
+.header-content p {
+    font-size: 1.1rem;
+    margin: 5px 0 0;
     opacity: 0.95;
     font-weight: 300;
     letter-spacing: 0.5px;
