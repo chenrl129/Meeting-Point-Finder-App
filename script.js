@@ -9,14 +9,40 @@ class MeetingPointFinder {
         this.userMarkers = [];
         this.routeControl = null;
         this.showRoutesPreference = true; // Default to showing routes
+        
+        // Dark mode settings
+        this.darkMode = localStorage.getItem('darkMode') === 'enabled';
+        
+        // History of meeting points
+        this.meetingPointHistory = JSON.parse(localStorage.getItem('meetingPointHistory') || '[]');
+        
+        // Current share data
+        this.currentShareData = null;
+        
         this.init();
     }
 
     init() {
+        // Apply dark mode if enabled
+        if (this.darkMode) {
+            document.body.classList.add('dark-mode');
+            // Update icon on theme toggle button
+            const themeBtn = document.getElementById('toggleThemeBtn');
+            if (themeBtn) {
+                const icon = themeBtn.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                }
+            }
+        }
+        
         this.initMap();
         this.bindEvents();
         this.requestUserLocation();
         this.showWelcomeModal();
+        this.initLocationAutocomplete();
+        this.updateHistoryPanel();
     }
 
     initMap() {
@@ -76,8 +102,23 @@ class MeetingPointFinder {
         document.getElementById('clearAllBtn').addEventListener('click', () => {
             this.clearAll();
         });
+        
+        // Export button
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            this.exportData();
+        });
+        
+        // Theme toggle button
+        document.getElementById('toggleThemeBtn').addEventListener('click', () => {
+            this.toggleDarkMode();
+        });
+        
+        // Share button
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            this.showShareModal();
+        });
 
-        // Modal events
+        // Welcome modal events
         document.getElementById('closeModalBtn').addEventListener('click', () => {
             this.hideWelcomeModal();
         });
@@ -92,6 +133,30 @@ class MeetingPointFinder {
             } else {
                 localStorage.removeItem('hideWelcomeModal');
             }
+        });
+        
+        // Share modal events
+        document.getElementById('closeShareModalBtn').addEventListener('click', () => {
+            this.hideShareModal();
+        });
+        document.getElementById('shareModal').addEventListener('click', (e) => {
+            if (e.target.id === 'shareModal') {
+                this.hideShareModal();
+            }
+        });
+        document.getElementById('copyLinkBtn').addEventListener('click', () => {
+            this.copyShareLink();
+        });
+        
+        // Share buttons
+        document.querySelector('.share-btn.whatsapp').addEventListener('click', () => {
+            this.shareVia('whatsapp');
+        });
+        document.querySelector('.share-btn.email').addEventListener('click', () => {
+            this.shareVia('email');
+        });
+        document.querySelector('.share-btn.sms').addEventListener('click', () => {
+            this.shareVia('sms');
         });
         
         // Toggle keyboard shortcuts panel
@@ -683,10 +748,7 @@ class MeetingPointFinder {
 }
 
 // Initialize the app when the page loads
-let app;
 document.addEventListener('DOMContentLoaded', () => {
-    app = new MeetingPointFinder();
+    // Create global instance for access from other scripts and UI event handlers
+    window.meetingPointFinder = new MeetingPointFinder();
 });
-
-// Export for global access (for inline onclick handlers)
-window.app = app;

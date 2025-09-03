@@ -1,0 +1,109 @@
+/* Share Modal Styles */
+.share-options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.share-link-area {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.share-link-area input {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.dark-mode .share-link-area input {
+    background: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+.share-link-area button {
+    background: var(--accent-color);
+    border: none;
+    color: white;
+    padding: 0 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.share-link-area button:hover {
+    background: var(--accent-hover);
+}
+
+.share-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.share-btn {
+    flex: 1;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.share-btn.whatsapp {
+    background: #25D366;
+    color: white;
+}
+
+.share-btn.email {
+    background: #EA4335;
+    color: white;
+}
+
+.share-btn.sms {
+    background: #3478F6;
+    color: white;
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.qr-code-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 10px;
+}
+
+.dark-mode .qr-code-container {
+    background: #2d3748;
+}
+
+#qrCode {
+    width: 200px;
+    height: 200px;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.qr-code-container p {
+    color: #718096;
+    font-size: 14px;
+}

@@ -8,12 +8,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="share-modal.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Leaflet Routing Machine for route visualization -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
-    <!-- Google Places API for address autocomplete -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBG8JAUghCp7CY2wuQFuZDuiSECBmMAxnw&libraries=places"></script>
+    <!-- Google Places API for address autocomplete - Add your own API key here -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
 </head>
 <body>
     <div class="container">
@@ -22,6 +23,14 @@
                 <h1><i class="fas fa-map-marker-alt"></i> Meeting Point Finder</h1>
                 <p>Your smart tool for finding the perfect meeting spot.</p>
             </div>
+            <div class="header-actions">
+                <button id="toggleThemeBtn" class="theme-toggle-btn" title="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="shareBtn" class="share-btn" title="Share Meeting Point">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+            </div>
         </header>
 
         <div class="main-content">
@@ -29,12 +38,16 @@
                 <div class="section">
                     <h3><i class="fas fa-users"></i> Add Locations</h3>
                     <div class="input-group">
-                        <input type="text" id="locationInput" placeholder="Enter address or location name">
+                        <div class="search-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="locationInput" placeholder="Enter address or location name">
+                            <div class="location-suggestions" id="locationSuggestions"></div>
+                        </div>
                         <button id="addLocationBtn"><i class="fas fa-plus"></i> Add</button>
                     </div>
                     <div class="input-help">
-                        <small>Click on the map to add locations, or type an address above</small>
-                        <small class="keyboard-shortcut">Press Enter to add location</small>
+                        <small><i class="fas fa-info-circle"></i> Click on the map or search for an address</small>
+                        <small class="keyboard-shortcut"><i class="fas fa-keyboard"></i> Enter to add location</small>
                     </div>
                     <div class="favorites-container">
                         <div class="favorites-header">
@@ -115,10 +128,20 @@
                         <p>Add at least 2 locations to calculate meeting points.</p>
                     </div>
                 </div>
-
+                
                 <div class="section">
+                    <h3><i class="fas fa-history"></i> Recent Meeting Points</h3>
+                    <div id="historyPanel" class="history-panel">
+                        <p class="no-history">No recent meeting points</p>
+                    </div>
+                </div>
+
+                <div class="section action-buttons">
                     <button id="clearAllBtn" class="clear-btn">
                         <i class="fas fa-trash"></i> Clear All
+                    </button>
+                    <button id="exportBtn" class="export-btn">
+                        <i class="fas fa-file-export"></i> Export
                     </button>
                 </div>
             </div>
@@ -174,10 +197,37 @@
             </div>
         </div>
     </div>
+    
+    <!-- Share Modal -->
+    <div class="modal-overlay" id="shareModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeShareModalBtn">&times;</button>
+            <h2>Share This Meeting Point</h2>
+            <p>Share this meeting location with your friends and colleagues:</p>
+            <div class="share-options">
+                <div class="share-link-area">
+                    <input type="text" id="shareLink" readonly>
+                    <button id="copyLinkBtn"><i class="fas fa-copy"></i></button>
+                </div>
+                <div class="share-buttons">
+                    <button class="share-btn whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                    <button class="share-btn email"><i class="fas fa-envelope"></i> Email</button>
+                    <button class="share-btn sms"><i class="fas fa-sms"></i> SMS</button>
+                </div>
+                <div class="qr-code-container">
+                    <div id="qrCode"></div>
+                    <p>Scan this QR code</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <script src="script.js"></script>
+    <script src="app-enhancements.js"></script>
+    <script src="integration-test.js"></script>
 
     <div class="modal-overlay" id="welcomeModal">
         <div class="modal-content">
