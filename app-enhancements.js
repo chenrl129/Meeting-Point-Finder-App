@@ -65,24 +65,107 @@ MeetingPointFinder.prototype.initLocationAutocomplete = function() {
 // Dark mode toggle
 MeetingPointFinder.prototype.toggleDarkMode = function() {
     const body = document.body;
+    
+    // Add transition class for smooth color change
+    body.classList.add('dark-mode-transition');
+    
+    // Toggle dark mode
     body.classList.toggle('dark-mode');
     
+    // Store the preference
     this.darkMode = body.classList.contains('dark-mode');
     localStorage.setItem('darkMode', this.darkMode ? 'enabled' : 'disabled');
     
-    // Update map style if needed
+    // Update UI elements for dark mode
+    const toggleIcon = document.querySelector('#toggleThemeBtn i');
+    const defaultStyleBtn = document.querySelector('.map-style-btn[data-style="default"]');
+    const darkStyleBtn = document.querySelector('.map-style-btn[data-style="dark"]');
+    
     if (this.darkMode) {
+        // Update map to dark style
         this.changeMapStyle('dark');
-        document.querySelector('.map-style-btn[data-style="dark"]').classList.add('active');
-        document.querySelector('.map-style-btn[data-style="default"]').classList.remove('active');
-        document.querySelector('#toggleThemeBtn i').classList.remove('fa-moon');
-        document.querySelector('#toggleThemeBtn i').classList.add('fa-sun');
+        
+        // Update active map style button
+        if (darkStyleBtn) darkStyleBtn.classList.add('active');
+        if (defaultStyleBtn) defaultStyleBtn.classList.remove('active');
+        
+        // Change toggle button icon to sun
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-moon');
+            toggleIcon.classList.add('fa-sun');
+        }
+        
+        // Update marker colors for better visibility in dark mode
+        this.updateMarkerColors(true);
     } else {
+        // Update map to default style
         this.changeMapStyle('default');
-        document.querySelector('.map-style-btn[data-style="default"]').classList.add('active');
-        document.querySelector('.map-style-btn[data-style="dark"]').classList.remove('active');
-        document.querySelector('#toggleThemeBtn i').classList.remove('fa-sun');
-        document.querySelector('#toggleThemeBtn i').classList.add('fa-moon');
+        
+        // Update active map style button
+        if (defaultStyleBtn) defaultStyleBtn.classList.add('active');
+        if (darkStyleBtn) darkStyleBtn.classList.remove('active');
+        
+        // Change toggle button icon to moon
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-sun');
+            toggleIcon.classList.add('fa-moon');
+        }
+        
+        // Update marker colors for light mode
+        this.updateMarkerColors(false);
+    }
+    
+    // Remove transition class after animation completes
+    setTimeout(() => {
+        body.classList.remove('dark-mode-transition');
+    }, 800);
+};
+
+// Update marker colors for dark/light mode
+MeetingPointFinder.prototype.updateMarkerColors = function(isDarkMode) {
+    // Define colors for different modes
+    const colors = {
+        userMarker: isDarkMode ? '#818cf8' : '#4f46e5',
+        distanceMarker: isDarkMode ? '#f59e0b' : '#d97706',
+        travelTimeMarker: isDarkMode ? '#10b981' : '#059669',
+        routeColor: isDarkMode ? 'rgba(129, 140, 248, 0.8)' : 'rgba(99, 102, 241, 0.7)'
+    };
+    
+    // Update user location markers
+    this.userMarkers.forEach(marker => {
+        // Use custom icon with updated color if we have a createCustomIcon method
+        if (typeof this.createCustomIcon === 'function') {
+            const newIcon = this.createCustomIcon(colors.userMarker);
+            marker.setIcon(newIcon);
+        }
+    });
+    
+    // Update meeting point markers
+    if (this.meetingPointMarkers.distance && typeof this.createCustomIcon === 'function') {
+        this.meetingPointMarkers.distance.setIcon(this.createCustomIcon(colors.distanceMarker, 'Center Point'));
+    }
+    
+    if (this.meetingPointMarkers.travelTime && typeof this.createCustomIcon === 'function') {
+        this.meetingPointMarkers.travelTime.setIcon(this.createCustomIcon(colors.travelTimeMarker, 'Travel Time Point'));
+    }
+    
+    // Force update of all marker labels
+    if (isDarkMode) {
+        // Add dark-mode-label class to all marker labels
+        document.querySelectorAll('.marker-label').forEach(label => {
+            label.classList.add('dark-mode-label');
+        });
+    } else {
+        // Remove dark-mode-label class from all marker labels
+        document.querySelectorAll('.marker-label').forEach(label => {
+            label.classList.remove('dark-mode-label');
+        });
+    }
+    
+    // Update route colors if routes exist
+    if (this.routeControl) {
+        this.map.removeControl(this.routeControl);
+        this.updateRoutes();
     }
 };
 

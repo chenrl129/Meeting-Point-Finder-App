@@ -1,0 +1,78 @@
+/* Map Dark Mode Enhancements */
+
+/* Map Attribution - Fix for dark mode readability */
+.dark-mode .leaflet-control-attribution {
+    background-color: rgba(30, 41, 59, 0.8) !important;
+    color: #e2e8f0 !important;
+    text-shadow: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.dark-mode .leaflet-control-attribution a {
+    color: #818cf8 !important;
+}
+
+.dark-mode .leaflet-control-attribution a:hover {
+    text-decoration: underline;
+}
+
+/* Custom Leaflet Popup Styles for dark mode */
+.dark-mode .leaflet-popup-content-wrapper {
+    background-color: #1e293b !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark-mode .leaflet-popup-tip {
+    background-color: #1e293b !important;
+}
+
+.dark-mode .popup-title {
+    color: #f1f5f9;
+}
+
+.dark-mode .popup-coords {
+    color: #94a3b8;
+}
+
+/* Marker label styles for dark mode */
+.dark-mode .leaflet-marker-icon .marker-label {
+    color: #f1f5f9;
+    background-color: rgba(30, 41, 59, 0.85);
+    border: 1px solid #475569;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* Marker text readability enhancements */
+.leaflet-marker-icon .marker-label {
+    text-shadow: 0px 0px 2px #fff, 0px 0px 4px #fff; /* Text outline for light mode */
+}
+
+.dark-mode .leaflet-marker-icon .marker-label {
+    text-shadow: 0px 0px 2px #000, 0px 0px 4px #000; /* Text outline for dark mode */
+}
+
+/* Improve layer control in dark mode */
+.dark-mode .leaflet-control-layers {
+    background-color: #1e293b;
+    color: #e2e8f0;
+    border-color: #475569;
+}
+
+.dark-mode .leaflet-control-layers-toggle {
+    background-color: #334155;
+}
+
+.dark-mode .leaflet-control-zoom a {
+    background-color: #334155;
+    color: #f1f5f9;
+    border-color: #475569;
+}
+
+.dark-mode .leaflet-control-zoom a:hover {
+    background-color: #475569;
+}

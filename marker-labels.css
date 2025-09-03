@@ -1,0 +1,51 @@
+/* Custom Marker Label Styles */
+.custom-marker {
+    position: relative;
+}
+
+.marker-label {
+    position: absolute;
+    top: 28px;
+    left: -50px;
+    width: 120px;
+    text-align: center;
+    color: #1e293b;
+    font-size: 12px;
+    font-weight: 700;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 3px;
+    padding: 3px 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+    z-index: 1000;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    text-shadow: 0px 0px 1px white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode styling for marker labels - applied by parent element */
+.dark-mode .marker-label {
+    color: #ffffff;
+    background-color: #000000;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+    text-shadow: 0 0 3px #ffffff;
+    border: 2px solid #ffffff;
+    font-weight: 900;
+    font-size: 13px;
+    padding: 4px 8px;
+    letter-spacing: 0.5px;
+}
+
+/* Dark mode styling applied directly to label elements */
+.dark-mode-label {
+    color: #ffffff !important;
+    background-color: #000000 !important;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.7) !important;
+    text-shadow: 0 0 3px #ffffff !important;
+    border: 2px solid #ffffff !important;
+    font-weight: 900 !important;
+    font-size: 13px !important;
+    padding: 4px 8px !important;
+    letter-spacing: 0.5px !important;
+}

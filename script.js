@@ -10,8 +10,17 @@ class MeetingPointFinder {
         this.routeControl = null;
         this.showRoutesPreference = true; // Default to showing routes
         
-        // Dark mode settings
-        this.darkMode = localStorage.getItem('darkMode') === 'enabled';
+        // Dark mode settings - check system preference if no stored preference
+        const storedDarkMode = localStorage.getItem('darkMode');
+        if (storedDarkMode === null) {
+            // Check system preference for dark mode
+            const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            this.darkMode = prefersDarkMode;
+            // Save the preference
+            localStorage.setItem('darkMode', this.darkMode ? 'enabled' : 'disabled');
+        } else {
+            this.darkMode = storedDarkMode === 'enabled';
+        }
         
         // History of meeting points
         this.meetingPointHistory = JSON.parse(localStorage.getItem('meetingPointHistory') || '[]');
@@ -392,7 +401,7 @@ class MeetingPointFinder {
 
     addMarkerToMap(location) {
         const marker = L.marker([location.lat, location.lng], {
-            icon: this.createCustomIcon('#3182ce'),
+            icon: this.createCustomIcon('#3182ce', location.name),
             draggable: true // Make markers draggable
         }).addTo(this.map);
 
@@ -412,12 +421,39 @@ class MeetingPointFinder {
         this.userMarkers.push({ marker, id: location.id });
     }
 
-    createCustomIcon(color) {
+    createCustomIcon(color, label = '') {
+        // Check if dark mode is active
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        const borderColor = isDarkMode ? '#ffffff' : 'white';
+        const shadowColor = isDarkMode ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.3)';
+        
+        // Enhance marker size and visibility
+        let html = `
+            <div style="background-color: ${color}; width: 24px; height: 24px; border-radius: 50%; 
+                 border: 4px solid ${borderColor}; box-shadow: 0 0 8px ${shadowColor};"></div>`;
+                 
+        if (label) {
+            // Apply styles directly inline for maximum specificity and override
+            if (isDarkMode) {
+                html += `<div class="marker-label" style="color: #ffffff !important; 
+                background-color: #000000 !important; 
+                box-shadow: 0 0 8px rgba(255, 255, 255, 0.7) !important;
+                text-shadow: 0 0 3px #ffffff !important;
+                border: 2px solid #ffffff !important;
+                font-weight: 900 !important;
+                font-size: 13px !important;
+                padding: 4px 8px !important;
+                letter-spacing: 0.5px !important;">${label}</div>`;
+            } else {
+                html += `<div class="marker-label">${label}</div>`;
+            }
+        }
+        
         return L.divIcon({
             className: 'custom-marker',
-            html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
-            iconSize: [20, 20],
-            iconAnchor: [10, 10]
+            html: html,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
         });
     }
 
@@ -480,7 +516,7 @@ class MeetingPointFinder {
         
         // Add meeting point marker
         this.meetingPointMarkers.distance = L.marker([centroid.lat, centroid.lng], {
-            icon: this.createCustomIcon('#38a169')
+            icon: this.createCustomIcon('#38a169', 'Center Point')
         }).addTo(this.map);
 
         this.meetingPointMarkers.distance.bindPopup(`
@@ -550,7 +586,7 @@ class MeetingPointFinder {
             
             // Add meeting point marker
             this.meetingPointMarkers.travelTime = L.marker([meetingPoint.lat, meetingPoint.lng], {
-                icon: this.createCustomIcon('#d69e2e')
+                icon: this.createCustomIcon('#d69e2e', 'Travel Time Point')
             }).addTo(this.map);
 
             this.meetingPointMarkers.travelTime.bindPopup(`

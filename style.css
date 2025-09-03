@@ -1,21 +1,52 @@
 :root {
+    /* Base colors */
     --bg-gradient-light: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --bg-gradient-dark: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    --bg-gradient-dark: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     --text-color-light: #333;
     --text-color-dark: #e2e8f0;
+    
+    /* Panel backgrounds */
     --panel-bg-light: rgba(255, 255, 255, 0.98);
-    --panel-bg-dark: rgba(26, 32, 44, 0.95);
-    --accent-color: #667eea;
-    --accent-hover: #5a67d8;
+    --panel-bg-dark: rgba(15, 23, 42, 0.95);
+    
+    /* Accent colors */
+    --accent-color-light: #667eea;
+    --accent-color-dark: #818cf8;
+    --accent-hover-light: #5a67d8;
+    --accent-hover-dark: #6366f1;
+    
+    /* Border colors */
     --border-light: #e2e8f0;
-    --border-dark: #4a5568;
+    --border-dark: #334155;
+    
+    /* Input and control colors */
+    --input-bg-light: #ffffff;
+    --input-bg-dark: #1e293b;
+    --input-border-light: #cbd5e1;
+    --input-border-dark: #475569;
+    --input-text-light: #1e293b;
+    --input-text-dark: #e2e8f0;
+    
+    /* Button colors */
+    --button-bg-light: #f1f5f9;
+    --button-bg-dark: #334155;
+    --button-text-light: #334155;
+    --button-text-dark: #e2e8f0;
+    
+    /* Shadow colors */
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-dark: rgba(0, 0, 0, 0.5);
+    
+    /* Hover effects */
+    --hover-bg-light: rgba(0, 0, 0, 0.05);
+    --hover-bg-dark: rgba(255, 255, 255, 0.1);
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.5s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 body {
@@ -28,6 +59,11 @@ body {
 body.dark-mode {
     background: var(--bg-gradient-dark);
     color: var(--text-color-dark);
+}
+
+/* Enable smooth transition between light and dark mode */
+.dark-mode-transition {
+    transition: background-color 0.7s ease-in-out, color 0.5s ease-in-out;
 }
 
 .container {
@@ -60,21 +96,44 @@ header {
     background: rgba(255, 255, 255, 0.2);
     border: none;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 16px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.dark-mode .theme-toggle-btn {
+    background: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(99, 102, 241, 0.3);
 }
 
 .theme-toggle-btn:hover,
 .share-btn:hover {
     background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .theme-toggle-btn:hover {
+    background: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(99, 102, 241, 0.5);
+}
+
+/* Theme toggle button animation */
+.theme-toggle-btn i {
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.theme-toggle-btn:active i {
+    transform: rotate(180deg);
 }
 
 .header-content h1 {
@@ -112,6 +171,7 @@ header {
     max-height: 100%;
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: background 0.5s ease, box-shadow 0.5s ease, border 0.5s ease;
 }
 
 .dark-mode .controls-panel {
@@ -165,18 +225,21 @@ header {
     flex: 1;
     width: 100%;
     padding: 15px 18px 15px 40px;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--input-border-light);
     border-radius: 12px;
     font-size: 15px;
     transition: all 0.3s ease;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
+    color: var(--input-text-light);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .dark-mode .input-group input {
-    background: rgba(45, 55, 72, 0.8);
-    border-color: #4a5568;
-    color: #e2e8f0;
+    background: rgba(30, 41, 59, 0.8);
+    border-color: var(--input-border-dark);
+    color: var(--input-text-dark);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .location-suggestions {
@@ -186,28 +249,32 @@ header {
     width: 100%;
     background: white;
     border-radius: 0 0 12px 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px var(--shadow-light);
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: max-height 0.3s ease, opacity 0.2s ease;
     z-index: 100;
+    opacity: 0;
 }
 
 .location-suggestions.visible {
     max-height: 300px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--input-border-light);
     margin-top: -1px;
+    opacity: 1;
 }
 
 .dark-mode .location-suggestions {
-    background: #2d3748;
-    border-color: #4a5568;
+    background: var(--input-bg-dark);
+    border-color: var(--input-border-dark);
+    box-shadow: 0 5px 15px var(--shadow-dark);
 }
 
 .suggestion-item {
     padding: 12px 15px;
     cursor: pointer;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border-light);
+    transition: all 0.2s ease;
 }
 
 .suggestion-item:last-child {
@@ -215,16 +282,16 @@ header {
 }
 
 .suggestion-item:hover {
-    background: #f1f5f9;
+    background: var(--hover-bg-light);
 }
 
 .dark-mode .suggestion-item:hover {
-    background: #4a5568;
+    background: var(--hover-bg-dark);
 }
 
 .dark-mode .suggestion-item {
-    border-color: #4a5568;
-    color: #e2e8f0;
+    border-color: var(--border-dark);
+    color: var(--text-color-dark);
 }
 
 .input-group input:focus {
@@ -237,7 +304,7 @@ header {
 
 .input-group button {
     padding: 15px 20px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, var(--accent-color-light), #764ba2);
     color: white;
     border: none;
     border-radius: 12px;
@@ -248,9 +315,18 @@ header {
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
+.dark-mode .input-group button {
+    background: linear-gradient(135deg, var(--accent-color-dark), #805ad5);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
 .input-group button:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.dark-mode .input-group button:hover {
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
 }
 
 .input-help {
@@ -750,6 +826,14 @@ header {
     height: 100%;
     width: 100%;
     min-height: 500px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px var(--shadow-light);
+    transition: box-shadow 0.5s ease;
+}
+
+.dark-mode #map {
+    box-shadow: 0 5px 25px var(--shadow-dark);
 }
 
 .map-legend {
@@ -761,6 +845,16 @@ header {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     z-index: 1000;
+    color: #1a202c;
+    transition: all 0.3s ease;
+}
+
+/* Dark mode for map legend */
+.dark-mode .map-legend {
+    background: rgba(15, 23, 42, 0.95);
+    color: #f8fafc;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .legend-item {
@@ -782,15 +876,28 @@ header {
 }
 
 .user-location {
-    background: #3182ce;
+    background: #4f46e5;
 }
 
 .meeting-point-distance {
-    background: #38a169;
+    background: #d97706;
+}
+
+/* Dark mode colors for legend markers */
+.dark-mode .user-location {
+    background: #818cf8;
+}
+
+.dark-mode .meeting-point-distance {
+    background: #f59e0b;
 }
 
 .meeting-point-travel {
-    background: #d69e2e;
+    background: #059669;
+}
+
+.dark-mode .meeting-point-travel {
+    background: #10b981;
 }
 
 .loading-overlay {
@@ -878,6 +985,7 @@ header {
 /* Custom Leaflet Popup Styles */
 .leaflet-popup-content-wrapper {
     border-radius: 10px !important;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .leaflet-popup-content {
@@ -893,11 +1001,13 @@ header {
     font-weight: 600;
     color: #2d3748;
     margin-bottom: 5px;
+    transition: color 0.3s;
 }
 
 .popup-coords {
     color: #718096;
     font-size: 12px;
+    transition: color 0.3s;
 }
 
 /* Animation for buttons */
