@@ -43,6 +43,22 @@ class MeetingPointFinder {
         this.showWelcomeModal();
         this.initLocationAutocomplete();
         this.updateHistoryPanel();
+        this.setCurrentTime();
+    }
+    
+    setCurrentTime() {
+        // Get the current time
+        const now = new Date();
+        // Format it as HH:MM for the time input
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const currentTime = `${hours}:${minutes}`;
+        
+        // Set the meeting time input to the current time
+        const meetingTimeInput = document.getElementById('meetingTime');
+        if (meetingTimeInput) {
+            meetingTimeInput.value = currentTime;
+        }
     }
 
     initMap() {
